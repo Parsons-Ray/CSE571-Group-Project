@@ -231,3 +231,9 @@ class ApproximateQAgent(PacmanQAgent):
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
             print self.weights
+
+class SarsaLambdaAgent(QLearningAgent):
+    def __init__(self, y=10, **args):
+        self.y = y
+        QLearningAgent.__init__(self, **args)
+    
