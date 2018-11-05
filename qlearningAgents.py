@@ -235,5 +235,17 @@ class ApproximateQAgent(PacmanQAgent):
 class SarsaLambdaAgent(QLearningAgent):
     def __init__(self, y=10, **args):
         self.y = y
+        self.eligibility = util.Counter()
+        self.trace = []
         QLearningAgent.__init__(self, **args)
+
+    def update(self, state, action, nextState, nextAction, reward):
+        sigma = (reward + self.discount * self.values[(nextState, nextAction)] -
+                 self.values[(state, action)])
+        self.eligibility[(state, action)] = 1
+        for (s, a), v in self.eligibility:
+            self.values[(s, a)] += (self.alpha * sigma *
+                                    self.eligibility[(s, a)])
+            self.eligibility[(s, a)] *= self.discount * self.lambda
+        
     
