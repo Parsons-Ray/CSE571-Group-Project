@@ -493,6 +493,16 @@ if __name__ == '__main__':
                       'epsilon': opts.epsilon,
                       'actionFn': actionFn}
         a = qlearningAgents.QLearningAgent(**qLearnOpts)
+    elif opts.agent == 's':
+        #env.getPossibleActions, opts.discount, opts.learningRate, opts.epsilon
+        #simulationFn = lambda agent, state: simulation.GridworldSimulation(agent,state,mdp)
+        gridWorldEnv = GridworldEnvironment(mdp)
+        actionFn = lambda state: mdp.getPossibleActions(state)
+        qLearnOpts = {'gamma': opts.discount,
+                      'alpha': opts.learningRate,
+                      'epsilon': opts.epsilon,
+                      'actionFn': actionFn}
+        a = qlearningAgents.SarsaLambdaAgent(**qLearnOpts)
     elif opts.agent == 'random':
         # # No reason to use the random agent without episodes
         if opts.episodes == 0:
