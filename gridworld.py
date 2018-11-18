@@ -426,6 +426,9 @@ def parseOptions():
                          help='Manually control agent')
     optParser.add_option('-v', '--valueSteps',action='store_true' ,default=False,
                          help='Display each step of value iteration')
+    optParser.add_option('-y', '--lambda',action='store' ,
+                         type='int', dest='y',default=10,
+                         metavar="Y", help='Defines the lambda for SarsaLambdaAgent. Default = 10')
 
     opts, args = optParser.parse_args()
 
@@ -501,7 +504,8 @@ if __name__ == '__main__':
         qLearnOpts = {'gamma': opts.discount,
                       'alpha': opts.learningRate,
                       'epsilon': opts.epsilon,
-                      'actionFn': actionFn}
+                      'actionFn': actionFn,
+					  'y': opts.y}
         a = qlearningAgents.SarsaLambdaAgent(**qLearnOpts)
     elif opts.agent == 'random':
         # # No reason to use the random agent without episodes
@@ -554,6 +558,7 @@ if __name__ == '__main__':
             if opts.agent == 'random': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
             if opts.agent == 'value': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
             if opts.agent == 'q': displayCallback = lambda state: display.displayQValues(a, state, "CURRENT Q-VALUES")
+            if opts.agent == 's': displayCallback = lambda state: display.displayQValues(a, state, "CURRENT Q-VALUES")
 
     messageCallback = lambda x: printString(x)
     if opts.quiet:
@@ -585,7 +590,7 @@ if __name__ == '__main__':
         print
 
     # DISPLAY POST-LEARNING VALUES / Q-VALUES
-    if opts.agent == 'q' and not opts.manual:
+    if (opts.agent == 'q' or opts.agent == 's') and not opts.manual:
         try:
             display.displayQValues(a, message = "Q-VALUES AFTER "+str(opts.episodes)+" EPISODES")
             display.pause()
