@@ -232,20 +232,85 @@ class ApproximateQAgent(PacmanQAgent):
             "*** YOUR CODE HERE ***"
             print self.weights
 
+'''
+The Sarsa lambda agent keeps an eligibility trace, updating the q values
+for the last y states at a certain 
+'''
 class SarsaLambdaAgent(QLearningAgent):
-    def __init__(self, y=10, **args):
+    def __init__(self, y=.8, trace_length = None, **args):
         self.y = y
         self.eligibility = util.Counter()
         self.trace = []
+        #self.trace_length = trace_length our algorithm is likely to suffer performance issues
+        # in long episodes if we don't put a limit on the length of the eligibility trace.
+        self.predicted_next_action = None
+        self.prediction_made = False
         QLearningAgent.__init__(self, **args)
+
+    #getAction() must call doAction() for sim to work properly,
+    #But we also need to know the agent's next action ahead of time
+    #to update properly. solution: decideAction decides.
+    def decideAction(self, state):
+        
+        # Pick Action
+        if self.prediction_made:
+            action = self.predicted_next_action
+        else:
+            legalActions = self.getLegalActions(state)
+            action = None
+            if legalActions:
+                if util.flipCoin(self.epsilon):
+                    action = random.choice(self.getLegalActions(state))
+                else:
+                    action = self.computeActionFromQValues(state)
+                self.predicted_next_action = action
+                self.prediction_made = True
+                print "DECIDED: ", action
+        return action
+
+    def getAction(self, state):
+        if self.prediction_made:
+            a = self.predicted_next_action
+        else:
+            a = self.decideAction(state)
+        self.doAction(state, a)
+        return a
+
+    def doAction(self, state, action):
+        self.prediction_made = False
+        QLearningAgent.doAction(self, state, action)
+        print "DOING: ", action, " AT: "
+        print state
 
     def update(self, state, action, nextState, nextAction, reward):
         sigma = (reward + self.discount * self.values[(nextState, nextAction)] -
                  self.values[(state, action)])
-        self.eligibility[(state, action)] = 1
+        for (s, a) in self.eligibility:
+            self.eligibility[(s, a)] += 1
         for (s, a), v in self.eligibility:
             self.values[(s, a)] += (self.alpha * sigma *
                                     self.eligibility[(s, a)])
-            self.eligibility[(s, a)] *= self.discount * self.lambda
+            self.eligibility[(s, a)] *= self.discount * self.y
+    def observeTransition(self, state,action,nextState,deltaReward):
+        """
+            Called by environment to inform agent that a transition has
+            been observed. This will result in a call to self.update
+            on the same arguments
+
+            NOTE: Do *not* override or call this function
+        """
+        self.episodeRewards += deltaReward
+        nextAction = self.decideAction(nextState)
+        self.update(state,action,nextState,nextAction,deltaReward)
         
-    
+    def observationFunction(self, state):
+        """
+            This is where we ended up after our last action.
+            The simulation should somehow ensure this is called
+        """
+        print state
+        print self.lastState
+        if not self.lastState == None:
+            reward = state.getScore() - self.lastState.getScore()
+            self.observeTransition(self.lastState, self.lastAction, state, reward)
+        return state
