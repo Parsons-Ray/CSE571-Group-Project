@@ -240,12 +240,13 @@ class SarsaLambdaAgent(QLearningAgent):
     def __init__(self, y=.8, trace_length = None, **args):
         self.y = y
         self.eligibility = util.Counter()
-        self.trace = []
+        #self.trace = []
         #self.trace_length = trace_length our algorithm is likely to suffer performance issues
         # in long episodes if we don't put a limit on the length of the eligibility trace.
         self.predicted_next_action = None
         self.prediction_made = False
         QLearningAgent.__init__(self, **args)
+        #self.values[(2, 0), "east"] = 1000
 
     #getAction() must call doAction() for sim to work properly,
     #But we also need to know the agent's next action ahead of time
@@ -265,7 +266,7 @@ class SarsaLambdaAgent(QLearningAgent):
                     action = self.computeActionFromQValues(state)
                 self.predicted_next_action = action
                 self.prediction_made = True
-                print "DECIDED: ", action
+                #print "DECIDED: ", action
         return action
 
     def getAction(self, state):
@@ -279,18 +280,33 @@ class SarsaLambdaAgent(QLearningAgent):
     def doAction(self, state, action):
         self.prediction_made = False
         QLearningAgent.doAction(self, state, action)
-        print "DOING: ", action, " AT: "
-        print state
+        #print "DOING: ", action, " AT: "
+        #print state
 
-    def update(self, state, action, nextState, nextAction, reward):
+    def update(self, state, action, nextState, reward):
+        #print "IM ALIIIIIIVE!"
+        
+        
+        nextAction = self.decideAction(nextState)
+
+        _forgettable = self.values[(state, action)]
+        _forgettable = self.values[(nextState, nextAction)]
+        _forgettable = self.eligibility[(state, action)]
+        _forgettable = self.eligibility[(nextState, nextAction)]
+       
         sigma = (reward + self.discount * self.values[(nextState, nextAction)] -
                  self.values[(state, action)])
-        for (s, a) in self.eligibility:
-            self.eligibility[(s, a)] += 1
-        for (s, a), v in self.eligibility:
+        #print "SIGMA: ", sigma
+        
+        self.eligibility[(state, action)] += 1
+        for (s, a) in self.values:
+            #print "S: ", s, "A: ", a
             self.values[(s, a)] += (self.alpha * sigma *
                                     self.eligibility[(s, a)])
             self.eligibility[(s, a)] *= self.discount * self.y
+        if not self.getLegalActions(nextState):
+            self.eligibility = util.Counter()
+            #trace = []
     def observeTransition(self, state,action,nextState,deltaReward):
         """
             Called by environment to inform agent that a transition has
@@ -301,15 +317,15 @@ class SarsaLambdaAgent(QLearningAgent):
         """
         self.episodeRewards += deltaReward
         nextAction = self.decideAction(nextState)
-        self.update(state,action,nextState,nextAction,deltaReward)
+        self.update(state,action,nextState,deltaReward)
         
     def observationFunction(self, state):
         """
             This is where we ended up after our last action.
             The simulation should somehow ensure this is called
         """
-        print state
-        print self.lastState
+        #print state
+        #print self.lastState
         if not self.lastState == None:
             reward = state.getScore() - self.lastState.getScore()
             self.observeTransition(self.lastState, self.lastAction, state, reward)

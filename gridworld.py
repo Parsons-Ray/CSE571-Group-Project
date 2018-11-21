@@ -427,7 +427,7 @@ def parseOptions():
     optParser.add_option('-v', '--valueSteps',action='store_true' ,default=False,
                          help='Display each step of value iteration')
     optParser.add_option('-y', '--lambda',action='store' ,
-                         type='int', dest='y',default=10,
+                         type='float', dest='y',default=.8,
                          metavar="Y", help='Defines the lambda for SarsaLambdaAgent. Default = 10')
 
     opts, args = optParser.parse_args()
