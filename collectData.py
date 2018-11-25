@@ -7,7 +7,7 @@ import numpy as np
 def run():
 	agent = sys.argv[-1]
 	win_rate = []
-	index = range(50,2050,50)
+	index = range(100,2100,100)
 
 	for i in index:
 		training = i
