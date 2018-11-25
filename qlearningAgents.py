@@ -93,7 +93,6 @@ class QLearningAgent(ReinforcementAgent):
             return None
         else:
             return random.choice(bestActs)
-        
 
     def getAction(self, state):
         """
@@ -106,7 +105,6 @@ class QLearningAgent(ReinforcementAgent):
           HINT: You might want to use util.flipCoin(prob)
           HINT: To pick randomly from a list, use random.choice(list)
         """
-        # Pick Action
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
@@ -117,6 +115,7 @@ class QLearningAgent(ReinforcementAgent):
                 action = self.computeActionFromQValues(state)
 
         return action
+
 
     def update(self, state, action, nextState, reward):
         """
@@ -248,14 +247,14 @@ class SarsaLambdaAgent(QLearningAgent):
     def update(self, state, action, nextState, reward):
         nextAction = self.getAction(nextState)
 
-        sigma = (reward + self.discount * self.values[(nextState, nextAction)] -
-                 self.values[(state, action)])
+        sigma = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
         
         self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
 
-        for k, v in self.values.items():
-            self.values[k] = v + (self.alpha * sigma * self.eligibility[k])
-            self.eligibility[k] *= self.discount * self.y
+        for k, v in self.values.iteritems():
+            trace = self.eligibility[k]
+            self.values[k] = v + (self.alpha * sigma * trace)
+            self.eligibility[k] = trace * self.discount * self.y
 
         if not self.getLegalActions(nextState):
             self.eligibility = util.Counter()
