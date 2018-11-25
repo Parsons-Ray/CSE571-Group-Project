@@ -10,14 +10,21 @@ def run():
 	index = range(100,2100,100)
 
 	for i in index:
-		training = i
-		validation = training + 20
+		win = []
+		for _ in range(10):
+			training = i
+			validation = training + 20
 
-		command = "python pacman.py -p " + agent + " -x " + str(training) + " -n " + str(validation) + " -l smallGrid" 
-		output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
-		output = output.split("\n")
+			command = "python pacman.py -q -p " + agent + " -x " + str(training) + " -n " + str(validation) + " -l smallGrid" 
+			output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+			output = output.split("\n")
 
-		win_rate.append(float(output[-3].split()[-1][1:-1]))
+			win.append(float(output[-3].split()[-1][1:-1]))
+
+		win_rate.append(sum(win)/len(win))
+
+
+	print(win_rate)
 
 	plt.figure()
 	plt.plot(index, win_rate)
