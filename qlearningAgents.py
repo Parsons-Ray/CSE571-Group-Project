@@ -287,6 +287,6 @@ class PacmanSarsaAgent(SarsaLambdaAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action = self.getAction(state)
+        action = SarsaLambdaAgent.getAction(self,state)
         self.doAction(state,action)
         return action
