@@ -99,6 +99,38 @@
 	\(\epsilon\)-greedy function, our results for the basic set learning rate 
 	worked very well.
 
+	\begin{figure}[t]
+		\begin{minted}
+		[
+			frame=lines,
+			framesep=2mm,
+			baselinestretch=1.2,
+			fontsize=\tiny,
+			bgcolor=light-gray,
+		]{python}
+def update(self, state, action, nextState, reward):
+    nextAction = self.getAction(nextState)
+
+    delta = reward + (self.discount * 
+        self.values[(nextState, nextAction)]) - 
+        self.values[(state, action)]
+    
+    self.eligibility[(state, action)] = (1 - self.alpha) * 
+        self.eligibility[(state, action)] + 1
+
+    for k, v in self.values.iteritems():
+        trace = self.eligibility[k]
+        self.values[k] = v + (self.alpha * delta * trace)
+        self.eligibility[k] = trace * self.discount * self.y
+
+    if not self.getLegalActions(nextState):
+        self.eligibility = util.Counter()
+		\end{minted}
+		\caption{Implementation of \texttt{update} for Sarsa\((\lambda)\) agent.  Since \texttt{update} is called
+		by the agent each time an aciton is selected, the function implements the inner loop
+		of the algorithm detailed in Algorithm \ref{sarsa}.}
+		\label{fig:sarsa-agent}
+	\end{figure}
 
 \section{Results}
 \label{sec:results}
