@@ -1,0 +1,98 @@
+\documentclass[10pt,conference]{IEEEtran}
+
+\usepackage{booktabs} 
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{parcolumns}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{xcolor}
+
+\definecolor{light-gray}{gray}{0.95}
+
+\title{
+	Evaluation of Sarsa(\(\lambda\)) Learning Agent 
+	}
+
+\author{
+	\IEEEauthorblockN{Padraic Cashin \IEEEauthorrefmark{1}, 
+		David Lahtinen \IEEEauthorrefmark{2}, 
+		Ruihao Zhou \IEEEauthorrefmark{3},
+	}
+	\IEEEauthorblockA{
+		\IEEEauthorrefmark{1} ASU ID: 1214153888 \\
+		\IEEEauthorrefmark{2} ASU ID: 1207725034 \\
+		\IEEEauthorrefmark{3} ASU ID: 1213439264 \\
+	}
+}
+
+% \date{}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+\section{Background}
+\label{sec:background}
+	
+	The Sarsa algorithm belongs to an On-Policy algorithm for TD-Learning. The 
+	speciality of this algorithm compared to Q-Learning is that in the next 
+	state, maximum reward doesn’t play an role for updating the Q-values. 
+	Instead, it uses the next action and the same policy that determined the 
+	original action to get new reward. The name Sarsa actually comes from the 
+	four first letter of Q(s, a, r, s', a'). s and a represent original state 
+	and action, r is the reward observed in the following state, s', a' are 
+	the new state-action pair. As you can see in the following pictures, two 
+	action selection steps needed for determining the next state-action pair 
+	along with the first. The parameters a and r won’t change as they do in 
+	Q-Learning. The nature of the policy's dependence on \(\mathcal{Q}\) determine 
+	the convergence of the properties of Sarsa algorithm. For example, one 
+	could use \(\epsilon\)-soft or \(\epsilon\)-greedy policies. \cite{sutton18} 
+
+\section{Sarsa(\(\lambda\) Implementation}
+\label{sec:implementation}
+
+	We chose to start with the codebase provided by UC Berkeley’s Pacman-themed AI 
+	tutorial. As the SARSA-lambda algorithm requires an eligibility trace we 
+	implemented this as a python dict with default value of 0, same as our Q table. 
+	Unlike the Q-table, the eligibility trace must be cleared between episodes, 
+	so we implemented a check for final step in the function which updated our 
+	Q table to clear the eligibility trace.
+    To test and demo the sarsa-lambda agent, we used a test that was built-in, 
+	and used by UC berkeley which consisted of a small, gridworld maze for our 
+	agent to run around in. What we found was that while the Default q agent 
+	first had to random walk to the goal, then to the square in front of the 
+	goal, and so on for each episode, the SARSA-lambda agent converged very 
+	quickly. After a single random walk to the goal, the Q table updated almost 
+	immediately to the optimal policy for the default starting position. While 
+	we probably could have improved the results by implementing an 
+	\(\epsilon\)-greedy function, our results for the basic set learning rate 
+	worked very well.
+
+
+\section{Results}
+\label{sec:results}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\bibliographystyle{abbrv}
+\bibliography{ref}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
