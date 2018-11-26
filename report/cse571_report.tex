@@ -79,7 +79,7 @@
 		\label{sarsa}
 	\end{algorithm}
 
-\section{Sarsa(\(\lambda\) Implementation}
+\section{Sarsa(\(\lambda)\) Implementation}
 \label{sec:implementation}
 
 	We chose to start with the codebase provided by UC Berkeley’s Pacman-themed AI 
@@ -141,7 +141,7 @@ def update(self, state, action, nextState, reward):
 		\begin{subfigure}[b]{0.40\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_gridworld_10}
 			\caption{\(Q\)-learning agent \(Q\) values}
-		\end{subfigure}
+		\end{subfigure}%
 		\begin{subfigure}[b]{0.40\textwidth}
 			\includegraphics[width=\textwidth]{./images/sarsa_gridworld_10}
 			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
@@ -150,25 +150,26 @@ def update(self, state, action, nextState, reward):
 		after 10 episodes of traing.  The Sarsa\((\lambda)\) agent is able
 		to evaluate more of the state space than the \(Q\)-learning agent.
 		Each agent was run for 10 episodes on the BookGrid world with a noise
-		rate of 0.2, and epsilon of 0.5.}
+		rate of 0.2, and \(\epsilon = 0.5\).}
 		\label{qvalues}
 	\end{figure*}
 
 	\begin{figure*}[h]
 		\centering
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}{0.5\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_winrate}
 			\caption{\(Q\)-Learning Agent}
-		\end{subfigure}
-
-		\begin{subfigure}[b]{0.40\textwidth}
+		\end{subfigure}%
+		\begin{subfigure}{0.5\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_winrate}
 			\caption{Sarsa\((\lambda)\) Agent}
 		\end{subfigure}
 		\caption{Win rate vs training episodes for \(Q\)-learning and
 		Sarsa\((\lambda)\) agents.  Each agent was trained using 
 		pacman smallGrid environment.  Win rate was taken from 
-		20 post training episodes.}
+		20 post training episodes. Each agent was trained with 
+		\(\epsilon = 0.05, \gamma = 0.8, \alpha = 0.2\).  The 
+		Sarsa\((\lambda)\) agent has a default \(\lambda = 0.8\).}
 		\label{winrate}
 	\end{figure*}
 
