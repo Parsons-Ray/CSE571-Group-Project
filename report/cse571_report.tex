@@ -135,6 +135,28 @@ def update(self, state, action, nextState, reward):
 \section{Results}
 \label{sec:results}
 
+	\begin{table}
+		\begin{tabular}{|l|c|c|c|}
+			\hline
+			Agent & Time(s)/100 episodes & 50\% Win Rate & Value convergence \\
+			\hline \hline
+			Sarsa\((\lambda)\) & 1678.92s & 1000 eps & 256 eps \\
+			\hline
+			\(Q\)-Learning & 3.54s & 1000 eps & 4096 eps \\
+			\hline
+		\end{tabular}
+		\caption{Summary of measured differences between Sarsa\((\lambda)\)
+		and \(Q\)-learning agents.  Time per 100 episodes (seconds) was 
+		taken from 20 trials using the \textit{pacman.py} smallGrid world.  
+		Similarly, the agents were trained on an increasing number of episodes until 
+		they achieved a 50\% win rate in the \textit{pacman.py} smallGrid 
+		world.  Value convergence was found by exponentially increasing 
+		the number of training episodes until the \(Q\)-values and 
+		action policy became stationary.  Value convergence was run
+		using \textit{gridworld.py} on the BookGrid world.}
+		\label{summary}
+	\end{table}
+			
 
 	\begin{figure*}[h]
 		\centering
