@@ -10,6 +10,7 @@
 \usepackage{listings}
 \usepackage{minted}
 \usepackage{xcolor}
+\usepackage{algorithm2e}
 
 \definecolor{light-gray}{gray}{0.95}
 
@@ -53,6 +54,30 @@
 	Q-Learning. The nature of the policy's dependence on \(\mathcal{Q}\) determine 
 	the convergence of the properties of Sarsa algorithm. For example, one 
 	could use \(\epsilon\)-soft or \(\epsilon\)-greedy policies. \cite{sutton18} 
+	
+	\begin{algorithm}
+		\DontPrintSemicolon
+		Initialize \(Q(s,a) = 0\) for all \(s \in \mathcal{S}, a \in \mathcal{A}(s)\)\;
+		\For{each episode} {
+			\(E(s, a) = 0\) for all \(s \in \mathcal{S}, a \in \mathcal{A}(s)\)\;
+			Initialize \(S,A\)\;
+			\For{step in an episode}{
+				Take action \(A\) and observe \(S',R\)\;
+				Choose \(A'\) based on \(S'\) and current policy\;
+				\(\delta \leftarrow R + \gamma Q(S',A') - Q(S,A)\)\;
+				\(E(S,A) \leftarrow (1-\alpha) E(S,A) + 1\)\;
+				\For{all \(s \in \mathcal{S}, a \in \mathcal{A}(s)\)} {
+					\(Q(s,a) \leftarrow Q(s,a) + \alpha \delta E(s,a)\) \;
+					\(E(s,a) \leftarrow \gamma \lambda E(s,a)\) \;
+				}
+				\(S \leftarrow S'\)\;
+				\(A \leftarrow A'\)\;
+			}
+			Until \(S\) is terminal\;
+		}
+		\caption{Sarsa\((\lambda)\) Algorithm with Dutch Tracing}
+		\label{sarsa}
+	\end{algorithm}
 
 \section{Sarsa(\(\lambda\) Implementation}
 \label{sec:implementation}
