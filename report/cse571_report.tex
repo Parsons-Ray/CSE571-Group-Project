@@ -150,7 +150,24 @@ def update(self, state, action, nextState, reward):
 
 \section{Results}
 \label{sec:results}
-
+	
+	Once the Sarsa\((\lambda)\) agent had been integrated into
+	the UC Berkley Pacman framework \cite{ucbai}, \textit{gridword.py} and 
+	\textit{pacman.py} were used to test out the efficacy of the Sarsa\((\lambda)\)
+	agent compared to the \(Q\)-learning agent already present.  
+	
+	For the this paper, we evaluated policy/value convergence in \textit{gridworld.py}, using
+	the BookGrid world.  Convergence was found by exponentially increasing the
+	number of training episodes until the policy became stationary.  The default
+	values for each agent were: \(\epsilon = 0.05, \gamma = 0.8, \alpha = 0.2\,
+	\lambda = 0.8\) and \(noise = 0.2\).
+	
+	To evaluate each agent in a more complex environment, we used 
+	\textit{pacman.py} with smallGrid world. Each agent was trained for 
+	\([100,2000]\) episodes and then evaluated for another 20 episodes.  The 
+	default settings for each agent was: \(\epsilon = 0.05, \gamma = 0.8, 
+	\alpha = 0.2\) and \(\lambda = 0.8\).
+	
 	\begin{table}
 		\begin{tabular}{|l|c|c|c|}
 			\hline
@@ -158,7 +175,7 @@ def update(self, state, action, nextState, reward):
 			\hline \hline
 			Sarsa\((\lambda)\) & 1678.92s & 1000 eps & 256 eps \\
 			\hline
-			\(Q\)-Learning & 3.54s & 1000 eps & 4096 eps \\
+			\(Q\)-Learning & 3.54s & 800 eps & 4096 eps \\
 			\hline
 		\end{tabular}
 		\caption{Summary of measured differences between Sarsa\((\lambda)\)
@@ -173,6 +190,16 @@ def update(self, state, action, nextState, reward):
 		\label{summary}
 	\end{table}
 			
+	Table \ref{summary} shows a summary of the experimental results.  In 
+	general we found that the Sarsa\((\lambda)\) agent out performed the 
+	\(Q\)-learning agent in the grid world.  Sarsa\((\lambda)\) was able to 
+	converge on an optimal policy 3840 training episodes before the \(Q\)-
+	learning agent.  On the other hand, the Sarsa\((\lambda)\) agent took approximately
+	500\(\times\) longer to train in the \textit{pacman.py} environment, most 
+	likely due the number of \((state, action)\) pairs that exist in the 
+	environment.  If we are willing to wait for the training rounds, the 
+	Sarsa\((\lambda)\) agent was able to reach a consistent 100\% win rate before
+	the \(Q\)-learning agent. 
 
 	\begin{figure*}[h]
 		\centering
@@ -191,6 +218,8 @@ def update(self, state, action, nextState, reward):
 		rate of 0.2, and \(\epsilon = 0.5\).}
 		\label{qvalues}
 	\end{figure*}
+
+	
 
 	\begin{figure*}[h]
 		\centering
