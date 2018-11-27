@@ -93,7 +93,6 @@ class QLearningAgent(ReinforcementAgent):
             return None
         else:
             return random.choice(bestActs)
-        
 
     def getAction(self, state):
         """
@@ -106,16 +105,17 @@ class QLearningAgent(ReinforcementAgent):
           HINT: You might want to use util.flipCoin(prob)
           HINT: To pick randomly from a list, use random.choice(list)
         """
-        # Pick Action
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        if util.flipCoin(self.epsilon):
-            action = random.choice(self.getLegalActions(state))
-        else:
-            action = self.computeActionFromQValues(state)
+        if legalActions:
+            if util.flipCoin(self.epsilon):
+                action = random.choice(self.getLegalActions(state))
+            else:
+                action = self.computeActionFromQValues(state)
 
         return action
+
 
     def update(self, state, action, nextState, reward):
         """
@@ -232,20 +232,122 @@ class ApproximateQAgent(PacmanQAgent):
             "*** YOUR CODE HERE ***"
             print self.weights
 
+'''
+The Sarsa lambda agent keeps an eligibility trace, updating the q values
+for the last y states at a certain 
+'''
 class SarsaLambdaAgent(QLearningAgent):
-    def __init__(self, y=10, **args):
+    def __init__(self, y=.8, trace_length = None, **args):
         self.y = y
         self.eligibility = util.Counter()
-        self.trace = []
+        self.predicted_next_action = None
+        self.prediction_made = False
         QLearningAgent.__init__(self, **args)
-
-    def update(self, state, action, nextState, nextAction, reward):
-        sigma = (reward + self.discount * self.values[(nextState, nextAction)] -
-                 self.values[(state, action)])
-        self.eligibility[(state, action)] = 1
-        for (s, a), v in self.eligibility:
-            self.values[(s, a)] += (self.alpha * sigma *
-                                    self.eligibility[(s, a)])
-            self.eligibility[(s, a)] *= self.discount * self.lambda
-        
     
+    #getAction() must call doAction() for sim to work properly,
+    #But we also need to know the agent's next action ahead of time
+    #to update properly. solution: decideAction decides.
+    def decideAction(self, state):
+
+        # Pick Action
+        if self.prediction_made:
+            action = self.predicted_next_action
+        else:
+            legalActions = self.getLegalActions(state)
+            action = None
+            if legalActions:
+                if util.flipCoin(self.epsilon):
+                    action = random.choice(self.getLegalActions(state))
+                else:
+                    action = self.computeActionFromQValues(state)
+                self.predicted_next_action = action
+                self.prediction_made = True
+        return action
+
+    def getAction(self, state):
+        if self.prediction_made:
+            a = self.predicted_next_action
+        else:
+            a = self.decideAction(state)
+        self.doAction(state, a)
+        return a
+
+    def doAction(self, state, action):
+        self.prediction_made = False
+        QLearningAgent.doAction(self, state, action)
+
+    def update(self, state, action, nextState, reward):
+        nextAction = self.decideAction(nextState)
+
+        _forgettable = self.values[(state, action)]
+        _forgettable = self.values[(nextState, nextAction)]
+        _forgettable = self.eligibility[(state, action)]
+        _forgettable = self.eligibility[(nextState, nextAction)]
+
+        sigma = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
+        
+        self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
+
+        for k, v in self.values.iteritems():
+            trace = self.eligibility[k]
+            self.values[k] = v + (self.alpha * sigma * trace)
+            self.eligibility[k] = trace * self.discount * self.y
+
+        if not self.getLegalActions(nextState):
+            self.eligibility = util.Counter()
+
+    def observeTransition(self, state,action,nextState,deltaReward):
+        """
+            Called by environment to inform agent that a transition has
+            been observed. This will result in a call to self.update
+            on the same arguments
+
+            NOTE: Do *not* override or call this function
+        """
+        self.episodeRewards += deltaReward
+        nextAction = self.decideAction(nextState)
+        self.update(state,action,nextState,deltaReward)
+
+    def observationFunction(self, state):
+        """
+            This is where we ended up after our last action.
+            The simulation should somehow ensure this is called
+        """
+        #print state
+        #print self.lastState
+        if not self.lastState == None:
+            reward = state.getScore() - self.lastState.getScore()
+            self.observeTransition(self.lastState, self.lastAction, state, reward)
+        return state
+
+
+class PacmanSarsaAgent(SarsaLambdaAgent):
+    "Exactly the same as SarsaLambdaAgent, but with different default parameters"
+
+    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, **args):
+        """
+        These default parameters can be changed from the pacman.py command line.
+        For example, to change the exploration rate, try:
+            python pacman.py -p PacmanSarsaLambdaAgent -a epsilon=0.1
+
+        alpha    - learning rate
+        epsilon  - exploration rate
+        gamma    - discount factor
+        numTraining - number of training episodes, i.e. no learning after these many episodes
+        """
+        args['epsilon'] = epsilon
+        args['gamma'] = gamma
+        args['alpha'] = alpha
+        args['numTraining'] = numTraining
+        self.index = 0  # This is always Pacman
+        SarsaLambdaAgent.__init__(self, **args)
+
+    def getAction(self, state):
+        """
+        Simply calls the getAction method of SarsaLambdaAgent and then
+        informs parent of action for Pacman.  Do not change or remove this
+        method.
+        """
+        action = SarsaLambdaAgent.getAction(self,state)
+        self.doAction(state,action)
+        return action

@@ -612,6 +612,7 @@ class Game:
         numAgents = len( self.agents )
 
         while not self.gameOver:
+            #print "EXECUTING"
             # Fetch the next agent
             agent = self.agents[agentIndex]
             move_time = 0
