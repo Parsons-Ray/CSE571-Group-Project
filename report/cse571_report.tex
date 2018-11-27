@@ -91,7 +91,8 @@ result of this comparison.
 			}
 			Until \(S\) is terminal\;
 		}
-		\caption{Sarsa\((\lambda)\) Algorithm with Dutch Tracing}
+		\caption{Sarsa\((\lambda)\) Algorithm with Dutch Tracing.  Algorithm
+		was provided by Sutton et al. \cite{sutton18}}
 		\label{sarsa}
 	\end{algorithm}
 
@@ -169,9 +170,10 @@ def update(self, state, action, nextState, reward):
 	\alpha = 0.2\) and \(\lambda = 0.8\).
 	
 	\begin{table}
-		\begin{tabular}{|l|c|c|c|}
+		\begin{tabular}{|c|c|c|c|}
 			\hline
-			Agent & Time(s)/100 episodes & 50\% Win Rate & Value convergence \\
+			Agent & Time(s)/100 eps & 50\% Win Rate & Value \\
+			& & & convergence \\
 			\hline \hline
 			Sarsa\((\lambda)\) & 1678.92s & 1000 eps & 256 eps \\
 			\hline
@@ -212,14 +214,29 @@ def update(self, state, action, nextState, reward):
 			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
 		\caption{\(Q\) values of the \(Q\)-learning and Sarsa\((\lambda)\) agents 
-		after 10 episodes of traing.  The Sarsa\((\lambda)\) agent is able
+		after 10 episodes of training.  The Sarsa\((\lambda)\) agent is able
 		to evaluate more of the state space than the \(Q\)-learning agent.
 		Each agent was run for 10 episodes on the BookGrid world with a noise
 		rate of 0.2, and \(\epsilon = 0.5\).}
 		\label{qvalues}
 	\end{figure*}
 
-	
+	In the \textit{gridworld.py} experiments we found that Sarsa\((\lambda)\) 
+	performed better than \(Q\)-learning due its eligibility trace allowing for
+	each training episode to update more of the \(Q\)-values than \(Q\)-learning's
+	single step functions.  Figure \ref{qvalues} clearly illustrates the difference. 
+	After only 10 training episodes, a majority of the \(Q\)-values have been
+	updated at least once by the Sarsa\((\lambda)\) agent; while the \(Q\)-learning
+	agent has only updated a few of its \(Q\)-values.
+
+	The ability to update the \(Q\)-values associated with each \((state,action)\) 
+	in the eligibility trace allows for good decisions be effect the value of the 
+	prior decisions, and thus speeds up policy convergence.  It also, means that
+	Sarsa\((\lambda)\) is susceptible to noise, as a series of poor or random choices 
+	that lead to a positive outcome are \textit{all} updated as though those 
+	decisions were good or meaningful to the final outcome.  This leads the agent
+	to get temporarily stuck in policies which are not optimal, meaning take longer
+	to achieve the goal.
 
 	\begin{figure*}[h]
 		\centering
@@ -239,6 +256,16 @@ def update(self, state, action, nextState, reward):
 		Sarsa\((\lambda)\) agent has a default \(\lambda = 0.8\).}
 		\label{winrate}
 	\end{figure*}
+
+	The other trade off of using the eligibility trace each time the agent 
+	picks an action, is the time needed to loop through all of the \(Q\)-values
+	in the environment.  For small simple environments such as \textit{gridworld.py},
+	the trade off between training time and number of training episodes puts 
+	Sarsa\((\lambda)\) ahead of \(Q\)-learning.  However, in the more complex 
+	\textit{pacman.py} environment the Sarsa\(\lambda)\) agent slows down 
+	considerably.  Even though Figure \ref{winrate} shows that Sarsa\((\lambda)\) 
+	was able to reach peak win rate with fewer training episodes than \(Q\)-learning,
+	the difference in real world training time was several hours.
 
 \section{Conclusion}
 \label{sec:conclusion}
