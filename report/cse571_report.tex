@@ -268,6 +268,14 @@ def update(self, state, action, nextState, reward):
 	the difference in real world training time was several hours.
 
 \section{Conclusion}
+From what we have already implemented, we can easily draw two conclusion:
+
+1. Q-learning maybe suffer from problems converging as a result due to it has higher per-sample variance than SARSA, however SARSA learns a near-optima policy while exploring. So if we decide to use SARSA, we need propose a good strategy to decay ϵ in  ϵ-greedy action choice, which can become fiddly hyper parameter to adjust.
+
+2. SARSA is more conservative than Q-learning, because SARSA will approach convergence allowing for all kinds of penalties while agent explore its move while the Q-learning ignore them. In another words, if there is risk of a large negative reward close to the optimal path, Q-learning will perform more aggressive and will trigger that reward risk. On the contrary, SARAS will try to avoid it and slowly learn to use it.
+
+All in all, Q-learning learn optimal policy directly and SARAS learn online. If you want to train agent in low-cost and fast0iterating environment, choose Q-learning. And if you care about reward risks while learning, SARAS will be the best choice compared Q-learning.
+
 \label{sec:conclusion}
 
 \bibliographystyle{abbrv}
