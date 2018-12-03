@@ -22,11 +22,13 @@
 	\IEEEauthorblockN{Padraic Cashin \IEEEauthorrefmark{1}, 
 	        Ruihao Zhou \IEEEauthorrefmark{2}
 		David Lahtinen \IEEEauthorrefmark{3}, 
+		Zubin Kapadia \IEEEauthorrefmark{4},
 	}
 	\IEEEauthorblockA{
 		\IEEEauthorrefmark{1} ASU ID: 1214153888 \\
 		\IEEEauthorrefmark{2} ASU ID: 1213439264 \\
 		\IEEEauthorrefmark{3} ASU ID: 1207725034 \\
+		\IEEEauthorrefmark{4} ASU ID: 1213238024 \\
 	}
 }
 
@@ -42,7 +44,7 @@ Intelligence is \(Q\)-learning and its goal is to learn itself and get a
 desired policy which will help agent to make best choice under that 
 circumstances. \(Q\)-learning does not require a model of the environment and 
 can handle problem without requiring adaptations, only with with stochastic 
-transitions and rewards. By successfully implement agent in individual project 
+transitions and rewards. By successfully implementing the agent in our individual project 
 3, we have already had a good understanding of this method, however, it’s not 
 the best method which means it also has some limitation. For example, it may 
 be slower and remains inflexible if alternative routes does not appear. Also, 
@@ -162,6 +164,10 @@ def update(self, state, action, nextState, reward):
 	number of training episodes until the policy became stationary.  The default
 	values for each agent were: \(\epsilon = 0.05, \gamma = 0.8, \alpha = 0.2\,
 	\lambda = 0.8\) and \(noise = 0.2\).
+
+	We also created two custom grid layouts viz. CustomGrid and LargeMazeGrid to test and compare the two agents. The LargeMazeGrid is a 20x20 grid with multiple dead ends and a single reward. We ran both the agents for 100 episodes (with default values and 0 noise) and the Sarsa\((\lambda)\) agent out performed the Q-learning agent on this grid. For the Sarsa\((\lambda)\) agent policy convergence was noticed after 15 episodes, whereas for the Q-learning agent it was after 65 episodes. Average time taken per episode for the Sarsa\((\lambda)\) agent was 0.18s, while the Q-learning agent took 0.29s.
+
+	The CustomGrid is a 5x5 grid, with a small reward near the start point and a large reward further away, with a couple hazards along the way. We ran both the agents for 1000 episodes (with default values and 0 noise). Both the agents performed identically on this grid. With the small reward being near the start, both the agents deviated towards it and didn't stray much from that path. 
 	
 	To evaluate each agent in a more complex environment, we used 
 	\textit{pacman.py} with smallGrid world. Each agent was trained for 
@@ -221,6 +227,36 @@ def update(self, state, action, nextState, reward):
 		\label{qvalues}
 	\end{figure*}
 
+	\begin{figure*}[h]
+		\centering
+		\begin{subfigure}[b]{0.40\textwidth}
+			\includegraphics[width=\textwidth]{./images/qlearning_largeMaze_10}
+			\caption{\(Q\)-learning agent Policy}
+		\end{subfigure}%
+		\begin{subfigure}[b]{0.40\textwidth}
+			\includegraphics[width=\textwidth]{./images/sarsa_largeMaze_10}
+			\caption{Sarsa\((\lambda)\) agent Policy}
+		\end{subfigure}
+		\caption{Policies of the \(Q\)-learning and Sarsa\((\lambda)\) agents 
+		after 10 episodes on the LargeMazeGrid. Sarsa\((\lambda)\) agent's policy is almost on the verge of converging as opposed to that of the \(Q\)-learning agent.}
+		\label{qvalues}
+	\end{figure*}
+
+		\begin{figure*}[h]
+		\centering
+		\begin{subfigure}[b]{0.40\textwidth}
+			\includegraphics[width=\textwidth]{./images/qlearning_customGrid_100}
+			\caption{\(Q\)-learning agent \(Q\) values}
+		\end{subfigure}%
+		\begin{subfigure}[b]{0.40\textwidth}
+			\includegraphics[width=\textwidth]{./images/sarsa_customGrid_100}
+			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
+		\end{subfigure}
+		\caption{\(Q\) values of the \(Q\)-learning and Sarsa\((\lambda)\) agents 
+		after 100 episodes on the CustomGrid. Identical results are found for both the agents on this grid.}
+		\label{qvalues}
+	\end{figure*}
+
 	In the \textit{gridworld.py} experiments we found that Sarsa\((\lambda)\) 
 	performed better than \(Q\)-learning due its eligibility trace allowing for
 	each training episode to update more of the \(Q\)-values than \(Q\)-learning's
@@ -270,7 +306,7 @@ def update(self, state, action, nextState, reward):
 \section{Conclusion}
 From what we have already implemented, we can easily draw two conclusion:
 
-1. Q-learning maybe suffer from problems converging as a result due to it has higher per-sample variance than SARSA, however SARSA learns a near-optima policy while exploring. So if we decide to use SARSA, we need propose a good strategy to decay ϵ in  ϵ-greedy action choice, which can become fiddly hyper parameter to adjust.
+1. Q-learning maybe suffer from problems converging as a result due to it has higher per-sample variance than SARSA, however SARSA learns a near-optima policy while exploring. So if we decide to use SARSA, we need propose a good strategy to decay ϵ in  ϵ-greedy action choice, which can become fiddly hyper parameter to adjust.
 
 2. SARSA is more conservative than Q-learning, because SARSA will approach convergence allowing for all kinds of penalties while agent explore its move while the Q-learning ignore them. In another words, if there is risk of a large negative reward close to the optimal path, Q-learning will perform more aggressive and will trigger that reward risk. On the contrary, SARAS will try to avoid it and slowly learn to use it.
 

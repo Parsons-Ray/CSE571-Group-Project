@@ -17,10 +17,11 @@ from graphicsUtils import *
 
 class GraphicsGridworldDisplay:
 
-    def __init__(self, gridworld, size=120, speed=1.0):
+    def __init__(self, gridworld, size=120, speed=1.0, hideQValues = False):
         self.gridworld = gridworld
         self.size = size
         self.speed = speed
+        self.hideQValues = hideQValues
 
     def start(self):
         setup(self.gridworld, size=self.size)
@@ -55,7 +56,7 @@ class GraphicsGridworldDisplay:
         for state in states:
             for action in self.gridworld.getPossibleActions(state):
                 qValues[(state, action)] = agent.getQValue(state, action)
-        drawQValues(self.gridworld, qValues, currentState, message)
+        drawQValues(self.gridworld, qValues, currentState, message, self.hideQValues)
         sleep(0.05 / self.speed)
 
 BACKGROUND_COLOR = formatColor(0,0,0)
@@ -128,7 +129,7 @@ def drawValues(gridworld, values, policy, currentState = None, message = 'State 
     pos = to_screen(((grid.width - 1.0) / 2.0, - 0.8))
     text( pos, TEXT_COLOR, message, "Courier", -32, "bold", "c")
 
-def drawQValues(gridworld, qValues, currentState = None, message = 'State-Action Q-Values'):
+def drawQValues(gridworld, qValues, currentState = None, message = 'State-Action Q-Values', hideQValues = False):
     grid = gridworld.grid
     blank()
     stateCrossActions = [[(state, action) for action in gridworld.getPossibleActions(state)] for state in gridworld.getStates()]
@@ -162,7 +163,7 @@ def drawQValues(gridworld, qValues, currentState = None, message = 'State-Action
                 valString = '%.2f' % value
                 drawSquare(x, y, value, minValue, maxValue, valString, action, False, isExit, isCurrent)
             else:
-                drawSquareQ(x, y, q, minValue, maxValue, valStrings, actions, isCurrent)
+                drawSquareQ(x, y, q, minValue, maxValue, valStrings, actions, isCurrent, hideQValues)
     pos = to_screen(((grid.width - 1.0) / 2.0, - 0.8))
     text( pos, TEXT_COLOR, message, "Courier", -32, "bold", "c")
 
@@ -255,7 +256,7 @@ def drawSquare(x, y, val, min, max, valStr, action, isObstacle, isTerminal, isCu
         text( (screen_x, screen_y), text_color, valStr, "Courier", -30, "bold", "c")
 
 
-def drawSquareQ(x, y, qVals, minVal, maxVal, valStrs, bestActions, isCurrent):
+def drawSquareQ(x, y, qVals, minVal, maxVal, valStrs, bestActions, isCurrent, hideQValues= False):
 
     (screen_x, screen_y) = to_screen((x, y))
 
@@ -292,31 +293,53 @@ def drawSquareQ(x, y, qVals, minVal, maxVal, valStrs, bestActions, isCurrent):
                    color = EDGE_COLOR,
                    filled = 0,
                    width = 3)
-    line(ne, sw, color = EDGE_COLOR)
-    line(nw, se, color = EDGE_COLOR)
+    if not hideQValues:
+        line(ne, sw, color = EDGE_COLOR)
+        line(nw, se, color = EDGE_COLOR)
 
     if isCurrent:
         circle( (screen_x, screen_y), 0.1*GRID_SIZE, LOCATION_COLOR, fillColor=LOCATION_COLOR )
-
-    for action in actions:
+    if hideQValues:
+        arrow = "x"
         text_color = TEXT_COLOR
-        if qVals[action] < max(qVals.values()): text_color = MUTED_TEXT_COLOR
-        valStr = ""
-        if action in valStrs:
-            valStr = valStrs[action]
-        h = -20
-        if action == 'north':
-            #polygon( (center, nw, ne), wedge_color, filled = 1, smooth = 0)
-            text(n, text_color, valStr, "Courier", h, "bold", "n")
-        if action == 'south':
-            #polygon( (center, sw, se), wedge_color, filled = 1, smooth = 0)
-            text(s, text_color, valStr, "Courier", h, "bold", "s")
-        if action == 'east':
-            #polygon( (center, ne, se), wedge_color, filled = 1, smooth = 0)
-            text(e, text_color, valStr, "Courier", h, "bold", "e")
-        if action == 'west':
-            #polygon( (center, nw, sw), wedge_color, filled = 1, smooth = 0)
-            text(w, text_color, valStr, "Courier", h, "bold", "w")
+        h = -10
+        for action in actions:
+            if qVals[action] == max(qVals.values()):
+                if arrow is not "x":
+                    arrow = "x"
+                    break
+                if action == 'north':
+                    arrow = "^\n|"
+                if action == 'south':
+                    arrow = "|\nv"
+                if action == 'east':
+                    arrow = "->"
+                if action == 'west':
+                    arrow = "<-"
+
+        text(center, text_color, arrow, "Courier", h, "bold", "w")
+    else:
+        for action in actions:
+            text_color = TEXT_COLOR
+            if qVals[action] < max(qVals.values()): text_color = MUTED_TEXT_COLOR
+            valStr = ""
+            if action in valStrs:
+                valStr = valStrs[action]
+            h = -20
+            if action == 'north':
+                #polygon( (center, nw, ne), wedge_color, filled = 1, smooth = 0)
+                text(n, text_color, valStr, "Courier", h, "bold", "n")
+            if action == 'south':
+                #polygon( (center, sw, se), wedge_color, filled = 1, smooth = 0)
+                text(s, text_color, valStr, "Courier", h, "bold", "s")
+            if action == 'east':
+                #polygon( (center, ne, se), wedge_color, filled = 1, smooth = 0)
+                text(e, text_color, valStr, "Courier", h, "bold", "e")
+            if action == 'west':
+                #polygon( (center, nw, sw), wedge_color, filled = 1, smooth = 0)
+                text(w, text_color, valStr, "Courier", h, "bold", "w")
+
+
 
 
 def getColor(val, minVal, max):
