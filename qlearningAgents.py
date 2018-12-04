@@ -279,6 +279,8 @@ class SarsaLambdaAgent(QLearningAgent):
     def update(self, state, action, nextState, reward):
         nextAction = self.decideAction(nextState)
 
+        #initializes these values in each counter so that they exist in the counter 
+        #When we access them later.
         _forgettable = self.values[(state, action)]
         _forgettable = self.values[(nextState, nextAction)]
         _forgettable = self.eligibility[(state, action)]
@@ -288,11 +290,13 @@ class SarsaLambdaAgent(QLearningAgent):
         
         self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
 
+        #here we update the whole eligibility trace
         for k, v in self.values.iteritems():
             trace = self.eligibility[k]
             self.values[k] = v + (self.alpha * sigma * trace)
             self.eligibility[k] = trace * self.discount * self.y
-
+            
+        #the eligibility trace must be cleaned between episodes.
         if not self.getLegalActions(nextState):
             self.eligibility = util.Counter()
 
