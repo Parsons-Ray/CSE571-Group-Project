@@ -39,20 +39,27 @@
 
 \section{Introduction}
 
-One of the most important reinforcement learning technique in Artificial 
-Intelligence is \(Q\)-learning and its goal is to learn itself and get a 
-desired policy which will help agent to make best choice under that 
-circumstances. \(Q\)-learning does not require a model of the environment and 
+One of the most important reinforcement learning techniques we have learned in CSE 571 is 
+\(Q\)-learning which learns through experience to arrive at a good policy.
+\(Q\)-learning does not require a complete model of the environment and 
 can handle problem without requiring adaptations, only with with stochastic 
-transitions and rewards. By successfully implementing the agent in our individual project 
-3, we have already had a good understanding of this method, however, it’s not 
-the best method which means it also has some limitation. For example, it may 
-be slower and remains inflexible if alternative routes does not appear. Also, 
-policies may not be sufficiently similar. In this group project, we try to 
-implement a on-policy algorithm called SARSA\((\lambda)\) and \(Q\)-learning 
-into our project three at the same time, and find out what’s the difference 
-between these two popular method. In the end, we can get straightforward 
-result of this comparison. 
+transitions and rewards. \(Q\)-learning has its drawbacks, however, one in particular being that
+it must remember every state that the agent has ever been in, as well as the possible actions in that
+state. This is a memory structure which grows exponentially with the number of other agents in the state space,
+and so we learned another technique: Approximate \(Q\)-learning, 
+which reduces the state space via a set of applicable features,
+allowing us to have amuch smaller Q-table and fill it in a much smaller number of episodes.
+By successfully implementing the agent in our individual project 
+3, we have already had a good understanding of this method, however, it also has its limitations.
+For example, for whatever your approximation function is, the agent must wander into a goal, and continue wandering
+into the path leading to the goal, for each state in the path, building its \(Q\) table vector by vector.
+Eligibility Tracing offers an alternative to this, instead of updating only one state on transition,
+SARSA\((\lambda)\) updates all vectors visited throughout the episode.
+
+SARSA is similar to \(Q\)-learning, the only difference being that SARSA observes the action that the agent will choose
+in the next state that it visits, and SARSA\((\lambda)\) is the SARSA algorithm with eligibility tracing.
+
+In this group project, we compare approximate SARSA\((\lambda)\) and approximate \(Q\)-learning.
 
 \label{sec:intro}
 
