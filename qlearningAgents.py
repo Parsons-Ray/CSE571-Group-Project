@@ -278,6 +278,8 @@ class SarsaLambdaAgent(QLearningAgent):
     def update(self, state, action, nextState, reward):
         nextAction = self.decideAction(nextState)
 
+        #initializes these values in each counter so that they exist in the counter 
+        #When we access them later.
         _forgettable = self.values[(state, action)]
         _forgettable = self.values[(nextState, nextAction)]
         _forgettable = self.eligibility[(state, action)]
