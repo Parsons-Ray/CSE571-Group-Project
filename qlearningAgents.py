@@ -423,7 +423,7 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
         for k, v in self.values.iteritems():
             self.eligibility[k] = self.eligibility[k] * self.discount * self.y
             
-            #update weights vector based on the eligibility trace value
+            #update weights vector based on the eligibility trace value the gradient and the feature value
             features = self.featExtractor.getFeatures(k[0], k[1])
             for f, e in features.iteritems():
                 self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k] * e)
