@@ -426,5 +426,5 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
             #update weights vector based on the eligibility trace value
             features = self.featExtractor.getFeatures(k[0], k[1])
             for f, e in features.iteritems():
-                self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k])
+                self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k] * e)
 
