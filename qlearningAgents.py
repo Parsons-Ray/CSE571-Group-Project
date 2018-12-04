@@ -198,9 +198,6 @@ class ApproximateQAgent(PacmanQAgent):
         val = 0
         for f in features.sortedKeys():
             val += self.weights[f] * features[f]
-        #print "STATE: ", state
-        #print "ACTION: ", action
-        #print "VALUE: ", val
         return val
 
     def update(self, state, action, nextState, reward):
@@ -226,12 +223,6 @@ class ApproximateQAgent(PacmanQAgent):
         # call the super-class final method
         PacmanQAgent.final(self, state)
 
-        # did we finish training?
-        if self.episodesSoFar == self.numTraining:
-            # you might want to print your weights here for debugging
-            "*** YOUR CODE HERE ***"
-            print self.weights
-
 '''
 The Sarsa lambda agent keeps an eligibility trace, updating the q values
 for the last y states at a certain 
@@ -247,8 +238,8 @@ class SarsaLambdaAgent(QLearningAgent):
     #getAction() must call doAction() for sim to work properly,
     #But we also need to know the agent's next action ahead of time
     #to update properly. solution: decideAction decides.
-	#which action will be taken in the future so that eligibility 
-	#and values can be updated correctly
+    #which action will be taken in the future so that eligibility 
+    #and values can be updated correctly
     def decideAction(self, state):
 
         # Pick Action
@@ -266,8 +257,8 @@ class SarsaLambdaAgent(QLearningAgent):
                 self.prediction_made = True
         return action
 
-	#returns the predicted action if it has not been taken
-	#yet otherwise return next future action
+    #returns the predicted action if it has not been taken
+    #yet otherwise return next future action
     def getAction(self, state):
         if self.prediction_made:
             a = self.predicted_next_action
@@ -280,10 +271,10 @@ class SarsaLambdaAgent(QLearningAgent):
         self.prediction_made = False
         QLearningAgent.doAction(self, state, action)
 
-	#update values and based on the previous values and current 
-	#eligibulity trace.  The current (state,action) is updated
-	#in eligibility to keep a record to how often an action has
-	#has been taken
+    #update values and based on the previous values and current 
+    #eligibulity trace.  The current (state,action) is updated
+    #in eligibility to keep a record to how often an action has
+    #has been taken
     def update(self, state, action, nextState, reward):
         nextAction = self.decideAction(nextState)
 
@@ -292,25 +283,25 @@ class SarsaLambdaAgent(QLearningAgent):
         _forgettable = self.eligibility[(state, action)]
         _forgettable = self.eligibility[(nextState, nextAction)]
 
-		#store delta for later use
-		# delta = current reward + discount*next states Q-value - current state Q-value
+        #store delta for later use
+        # delta = current reward + discount*next states Q-value - current state Q-value
         delta = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
         
-		#update the eligibilty value using dutch trace.
-		#discounts the the previous value to reduce the impact of looping
-		#actions during exploration
+        #update the eligibilty value using dutch trace.
+        #discounts the the previous value to reduce the impact of looping
+        #actions during exploration
         self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
 
-		#For each (state,action) pair in values, update the values based on 
-		#eligibilty and then update the eligibilty 
+        #For each (state,action) pair in values, update the values based on 
+        #eligibilty and then update the eligibilty 
         for k, v in self.values.iteritems():
             trace = self.eligibility[k]
-            self.values[k] = v + (self.alpha * sigma * trace)
+            self.values[k] = v + (self.alpha * delta * trace)
             self.eligibility[k] = trace * self.discount * self.y
 
-		#if we are at the end of an episode (terminal state) 
-		#clear eligibility trace so that new episodes are not
-		#compounded on old episodes.
+        #if we are at the end of an episode (terminal state) 
+        #clear eligibility trace so that new episodes are not
+        #compounded on old episodes.
         if not self.getLegalActions(nextState):
             self.eligibility = util.Counter()
 
@@ -370,3 +361,73 @@ class PacmanSarsaAgent(SarsaLambdaAgent):
         """
         action = SarsaLambdaAgent.getAction(self,state)
         return action
+
+
+class ApproximateSarsaAgent(PacmanSarsaAgent):
+    """
+       ApproximateQLearningAgent
+
+       You should only have to overwrite getQValue
+       and update.  All other QLearningAgent functions
+       should work as is.
+    """
+    def __init__(self, extractor='IdentityExtractor', **args):
+        self.featExtractor = util.lookup(extractor, globals())()
+        PacmanSarsaAgent.__init__(self, **args)
+        self.weights = util.Counter()
+
+    def getWeights(self):
+        return self.weights
+
+    def getQValue(self, state, action):
+        """
+          Should return Q(state,action) = w * featureVector
+          where * is the dotProduct operator
+        """
+        "*** YOUR CODE HERE ***"
+        features = self.featExtractor.getFeatures(state, action)
+        val = 0
+        for f in features.sortedKeys():
+            val += self.weights[f] * features[f]
+        self.values[(state,action)] = val
+        return val
+
+    #update values and based on the previous values and current 
+    #eligibulity trace.  The current (state,action) is updated
+    #in eligibility to keep a record to how often an action has
+    #has been taken
+    def update(self, state, action, nextState, reward):
+        
+        nextAction = self.decideAction(nextState)
+        
+        _forgettable = self.values[(state, action)]
+        _forgettable = self.values[(nextState, nextAction)]
+        _forgettable = self.eligibility[(state, action)]
+        _forgettable = self.eligibility[(nextState, nextAction)]
+
+        #store delta for later use
+        # delta = current reward + discount*next states Q-value - current state Q-value
+        delta = reward + (self.discount * self.values[(nextState,nextAction)]) - self.values[(state, action)]
+        
+        #update the eligibilty value using dutch trace.
+        #discounts the the previous value to reduce the impact of looping
+        #actions during exploration
+        self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
+
+        #For each (state,action) pair in values, update the values based on 
+        #eligibilty and then update the eligibilty 
+        for k, v in self.values.iteritems():
+            trace = self.eligibility[k]
+            self.eligibility[k] = trace * self.discount * self.y
+            
+            #update feature vector
+            features = self.featExtractor.getFeatures(k[0], k[1])
+            for f in features.sortedKeys():
+                self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k])
+
+        #if we are at the end of an episode (terminal state) 
+        #clear eligibility trace so that new episodes are not
+        #compounded on old episodes.
+        if not self.getLegalActions(nextState):
+            self.eligibility = util.Counter()
+       
