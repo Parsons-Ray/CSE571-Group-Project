@@ -391,8 +391,8 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
         val = 0
-        for f in features.sortedKeys():
-            val += self.weights[f] * features[f]
+        for f, v in features.iteritems():
+            val += self.weights[f] * v
         self.values[(state,action)] = val
         return val
 
