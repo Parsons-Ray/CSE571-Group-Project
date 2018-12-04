@@ -282,12 +282,7 @@ class SarsaLambdaAgent(QLearningAgent):
             a = self.predicted_next_action
         else:
             a = self.decideAction(state)
-        self.doAction(state,a)
         return a
-
-    def doAction(self, state, action):
-        self.prediction_made = False
-        QLearningAgent.doAction(self, state, action)
 
     #update values and based on the previous values and current 
     #eligibulity trace.  The current (state,action) is updated
@@ -320,12 +315,6 @@ class SarsaLambdaAgent(QLearningAgent):
             self.values[k] = v + (self.alpha * delta * trace)
             self.eligibility[k] = trace * self.discount * self.y
 
-        #if we are at the end of an episode (terminal state) 
-        #clear eligibility trace so that new episodes are not
-        #compounded on old episodes.
-        if not self.getLegalActions(nextState):
-            self.eligibility = util.Counter()
-
     def observeTransition(self, state,action,nextState,deltaReward):
         """
             Called by environment to inform agent that a transition has
@@ -335,20 +324,13 @@ class SarsaLambdaAgent(QLearningAgent):
             NOTE: Do *not* override or call this function
         """
         self.episodeRewards += deltaReward
-        nextAction = self.decideAction(nextState)
+        self.prediction_made = False
         self.update(state,action,nextState,deltaReward)
 
-    def observationFunction(self, state):
-        """
-            This is where we ended up after our last action.
-            The simulation should somehow ensure this is called
-        """
-        #print state
-        #print self.lastState
-        if not self.lastState == None:
-            reward = state.getScore() - self.lastState.getScore()
-            self.observeTransition(self.lastState, self.lastAction, state, reward)
-        return state
+	def startEpisode(self): 
+		#clear old trace before each episode
+		self.eligibility = util.Counter()
+		QLearningAgent.startEpisode(self)
 
 #A simple Pacman Sarsa(lambda) agent for pacman.py
 #fixes elpsilon, gamma, alpha, and numtraining to 
@@ -380,7 +362,7 @@ class PacmanSarsaAgent(SarsaLambdaAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action = SarsaLambdaAgent.decideAction(self,state)
+        action = SarsaLambdaAgent.getAction(self,state)
         self.doAction(state,action)
         return action
 
@@ -441,15 +423,8 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
         for k, v in self.values.iteritems():
             self.eligibility[k] = self.eligibility[k] * self.discount * self.y
             
-            #update feature vector
+            #update weights vector based on the eligibility trace value
             features = self.featExtractor.getFeatures(k[0], k[1])
             for f, e in features.iteritems():
                 self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k])
-
-        #clear eligibility trace so that new episodes are not
-        #compounded on old episodes.
-        if not self.getLegalActions(nextState):
-            self.eligibility = util.Counter()
-
-        return 
 
