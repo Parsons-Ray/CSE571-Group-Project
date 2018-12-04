@@ -247,6 +247,8 @@ class SarsaLambdaAgent(QLearningAgent):
     #getAction() must call doAction() for sim to work properly,
     #But we also need to know the agent's next action ahead of time
     #to update properly. solution: decideAction decides.
+	#which action will be taken in the future so that eligibility 
+	#and values can be updated correctly
     def decideAction(self, state):
 
         # Pick Action
@@ -264,6 +266,8 @@ class SarsaLambdaAgent(QLearningAgent):
                 self.prediction_made = True
         return action
 
+	#returns the predicted action if it has not been taken
+	#yet otherwise return next future action
     def getAction(self, state):
         if self.prediction_made:
             a = self.predicted_next_action
@@ -276,6 +280,10 @@ class SarsaLambdaAgent(QLearningAgent):
         self.prediction_made = False
         QLearningAgent.doAction(self, state, action)
 
+	#update values and based on the previous values and current 
+	#eligibulity trace.  The current (state,action) is updated
+	#in eligibility to keep a record to how often an action has
+	#has been taken
     def update(self, state, action, nextState, reward):
         nextAction = self.decideAction(nextState)
 
@@ -284,15 +292,25 @@ class SarsaLambdaAgent(QLearningAgent):
         _forgettable = self.eligibility[(state, action)]
         _forgettable = self.eligibility[(nextState, nextAction)]
 
-        sigma = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
+		#store delta for later use
+		# delta = current reward + discount*next states Q-value - current state Q-value
+        delta = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
         
+		#update the eligibilty value using dutch trace.
+		#discounts the the previous value to reduce the impact of looping
+		#actions during exploration
         self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
 
+		#For each (state,action) pair in values, update the values based on 
+		#eligibilty and then update the eligibilty 
         for k, v in self.values.iteritems():
             trace = self.eligibility[k]
             self.values[k] = v + (self.alpha * sigma * trace)
             self.eligibility[k] = trace * self.discount * self.y
 
+		#if we are at the end of an episode (terminal state) 
+		#clear eligibility trace so that new episodes are not
+		#compounded on old episodes.
         if not self.getLegalActions(nextState):
             self.eligibility = util.Counter()
 
@@ -320,7 +338,9 @@ class SarsaLambdaAgent(QLearningAgent):
             self.observeTransition(self.lastState, self.lastAction, state, reward)
         return state
 
-
+#A simple Pacman Sarsa(lambda) agent for pacman.py
+#fixes elpsilon, gamma, alpha, and numtraining to 
+#be the same as the PacmanQAgent for easy comparison
 class PacmanSarsaAgent(SarsaLambdaAgent):
     "Exactly the same as SarsaLambdaAgent, but with different default parameters"
 
@@ -349,5 +369,4 @@ class PacmanSarsaAgent(SarsaLambdaAgent):
         method.
         """
         action = SarsaLambdaAgent.getAction(self,state)
-        self.doAction(state,action)
         return action
