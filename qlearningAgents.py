@@ -170,7 +170,6 @@ class PacmanQAgent(QLearningAgent):
         self.doAction(state,action)
         return action
 
-
 class ApproximateQAgent(PacmanQAgent):
     """
        ApproximateQLearningAgent
@@ -193,35 +192,58 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        features = self.featExtractor.getFeatures(state, action)
-        #print features.sortedKeys()
-        val = 0
-        for f in features.sortedKeys():
-            val += self.weights[f] * features[f]
-        return val
+        f = self.featExtractor.getFeatures(state, action)
+        fkeys = f.keys()
+
+        qvalue = 0.0
+
+        for k in fkeys:
+            qvalue = qvalue + (self.getWeights()[k] * f[k])
+
+        return qvalue
+
+        util.raiseNotDefined()
 
     def update(self, state, action, nextState, reward):
         """
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        nextAVal = self.computeValueFromQValues(nextState)
 
-        
-        difference = (reward + self.discount * nextAVal -
-                      self.getQValue(state, action))
-        
-        features = self.featExtractor.getFeatures(state, action)
-        for f in features.sortedKeys():
-            
-            self.weights[f] = self.weights[f] + (self.alpha * difference *
-                                features[f])
-                
+        f = self.featExtractor.getFeatures(state, action)
+        fkeys = f.keys()
+        temp = util.Counter()
+
+        for k in fkeys:
+            nextActions = self.getLegalActions(nextState)
+            if nextActions:
+                diff = (float(reward) + (self.discount *
+                        max([self.getQValue(nextState, nextAction) for nextAction in nextActions]))) \
+                        - self.getQValue(state, action)
+
+            else:
+                diff = (float(reward) - self.getQValue(state, action))
+
+            temp[k] = self.weights[k] + (self.alpha * diff * float(f[k]))
+
+        for k in fkeys:
+            self.weights[k] = float(temp[k])
+
+
+        return
+
+        util.raiseNotDefined()
 
     def final(self, state):
         "Called at the end of each game."
         # call the super-class final method
         PacmanQAgent.final(self, state)
+
+        # did we finish training?
+        if self.episodesSoFar == self.numTraining:
+            # you might want to print your weights here for debugging
+            "*** YOUR CODE HERE ***"
+            pass
 
 '''
 The Sarsa lambda agent keeps an eligibility trace, updating the q values
@@ -427,9 +449,9 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
             for f in features.sortedKeys():
                 self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k])
 
-        #if we are at the end of an episode (terminal state) 
         #clear eligibility trace so that new episodes are not
         #compounded on old episodes.
         if not self.getLegalActions(nextState):
             self.eligibility = util.Counter()
-       
+
+        return 
