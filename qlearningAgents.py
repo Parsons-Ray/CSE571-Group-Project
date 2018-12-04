@@ -282,7 +282,7 @@ class SarsaLambdaAgent(QLearningAgent):
             a = self.predicted_next_action
         else:
             a = self.decideAction(state)
-        self.doAction(state, a)
+        self.doAction(state,a)
         return a
 
     def doAction(self, state, action):
@@ -306,11 +306,12 @@ class SarsaLambdaAgent(QLearningAgent):
         #store delta for later use
         # delta = current reward + discount*next states Q-value - current state Q-value
         delta = reward + (self.discount * self.values[(nextState, nextAction)]) - self.values[(state, action)]
-        
-        #update the eligibilty value using dutch trace.
+
+
+        #update the eligibilty value.
         #discounts the the previous value to reduce the impact of looping
         #actions during exploration
-        self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
+        self.eligibility[(state, action)] = (1-self.alpha)* self.eligibility[(state,action)] + 1
 
         #For each (state,action) pair in values, update the values based on 
         #eligibilty and then update the eligibilty 
@@ -379,7 +380,8 @@ class PacmanSarsaAgent(SarsaLambdaAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action = SarsaLambdaAgent.getAction(self,state)
+        action = SarsaLambdaAgent.decideAction(self,state)
+        self.doAction(state,action)
         return action
 
 
@@ -427,22 +429,21 @@ class ApproximateSarsaAgent(PacmanSarsaAgent):
 
         #store delta for later use
         # delta = current reward + discount*next states Q-value - current state Q-value
-        delta = reward + (self.discount * self.values[(nextState,nextAction)]) - self.values[(state, action)]
+        delta = reward + (self.discount * self.getQValue(nextState, nextAction) - self.getQValue(state,action))
         
-        #update the eligibilty value using dutch trace.
-        #discounts the the previous value to reduce the impact of looping
+        #update the eligibilty value using dutch trace
+        #to reduce the impact of looping
         #actions during exploration
-        self.eligibility[(state, action)] = (1 - self.alpha) * self.eligibility[(state, action)] + 1
+        self.eligibility[(state, action)] = (1-self.alpha)* self.eligibility[(state,action)] + 1
 
         #For each (state,action) pair in values, update the values based on 
         #eligibilty and then update the eligibilty 
         for k, v in self.values.iteritems():
-            trace = self.eligibility[k]
-            self.eligibility[k] = trace * self.discount * self.y
+            self.eligibility[k] = self.eligibility[k] * self.discount * self.y
             
             #update feature vector
             features = self.featExtractor.getFeatures(k[0], k[1])
-            for f in features.sortedKeys():
+            for f, e in features.iteritems():
                 self.weights[f] = self.weights[f] + (self.alpha * delta * self.eligibility[k])
 
         #clear eligibility trace so that new episodes are not
