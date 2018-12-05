@@ -8,5 +8,7 @@ x is the number of training sessions, n is the total number of sessions, l is th
 
 You can substitute smallGrid with bookGrid, mazeGrid, customGrid, and largeMazeGrid for viewing the algorithm in other environments.
 
-For more environments, there is pacman.py, which you can subsitute for gridworld.py, which has the environments: 
+For more environments, there is pacman.py, which you can subsitute for gridworld.py, which has environments where LFA is more appropriate, such as classicSmall.
+
+Our agent code is in qlearningAgents.py, and we have also made changes to	graphicsGridworldDisplay.py and gridworld.py.
 
