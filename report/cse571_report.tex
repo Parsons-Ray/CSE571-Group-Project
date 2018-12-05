@@ -196,7 +196,7 @@ def update(self, state, action, nextState, reward):
 			Approximate & 1.92s & 800 eps & N/A \\
 			\(Q\)-Learning & & & \\
 			\hline
-			Approximate & 1075.45s & 1200 eps & N/A \\
+			Approximate & 896.32s & 1200 eps & N/A \\
 			Sarsa\(\lambda)\) & & & \\
 			\hline
 		\end{tabular}
@@ -223,13 +223,13 @@ def update(self, state, action, nextState, reward):
 	Sarsa\((\lambda)\) agent was able to reach a consistent 100\% win rate before
 	the \(Q\)-learning agent. 
 
-	\begin{figure*}[h]
+	\begin{figure}[h]
 		\centering
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_gridworld_10}
 			\caption{\(Q\)-learning agent \(Q\) values}
 		\end{subfigure}%
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/sarsa_gridworld_10}
 			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
@@ -239,7 +239,7 @@ def update(self, state, action, nextState, reward):
 		Each agent was run for 10 episodes on the BookGrid world with a noise
 		rate of 0.2, and \(\epsilon = 0.5\).}
 		\label{qvalues}
-	\end{figure*}
+	\end{figure}
 
 	\begin{figure*}[h]
 		\centering
@@ -256,20 +256,20 @@ def update(self, state, action, nextState, reward):
 		\label{qvalues}
 	\end{figure*}
 
-		\begin{figure*}[h]
+		\begin{figure}[h]
 		\centering
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_customGrid_100}
 			\caption{\(Q\)-learning agent \(Q\) values}
 		\end{subfigure}%
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/sarsa_customGrid_100}
 			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
 		\caption{\(Q\) values of the \(Q\)-learning and Sarsa\((\lambda)\) agents 
 		after 100 episodes on the CustomGrid. Identical results are found for both the agents on this grid.}
 		\label{qvalues}
-	\end{figure*}
+	\end{figure}
 
 	In the \textit{gridworld.py} experiments we found that Sarsa\((\lambda)\) 
 	performed better per episode than \(Q\)-learning due its eligibility trace allowing for
@@ -290,11 +290,11 @@ def update(self, state, action, nextState, reward):
 
 	\begin{figure*}[h]
 		\centering
-		\begin{subfigure}{0.5\textwidth}
+		\begin{subfigure}{0.40\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_winrate}
 			\caption{\(Q\)-Learning Agent}
 		\end{subfigure}%
-		\begin{subfigure}{0.5\textwidth}
+		\begin{subfigure}{0.40\textwidth}
 			\includegraphics[width=\textwidth]{./images/sarsa_winrate}
 			\caption{Sarsa\((\lambda)\) Agent}
 		\end{subfigure}
