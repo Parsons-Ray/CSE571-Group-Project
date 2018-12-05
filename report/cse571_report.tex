@@ -37,6 +37,20 @@
 \begin{document}
 \maketitle
 
+\begin{abstract}
+	This project compares exact and approximate versions of 
+	\(Q\)-Learning and the SARSA(\(\lambda\)) algorithm. We examined 
+	the performance and accuracy of each in two settings: \textit{gridworld}, and \textit{pacman}. 
+	Gridworld is a small environment; here, SARSA(\(\lambda\)) performed better 
+	(likely due to its ability to update multiple \(Q\)-values per action) 
+	but took longer to train. However, we also found that SARSA(\(\lambda\)) 
+	was more sensitive to noise. Pacman is a more complex environment, and SARSA(\(\lambda\)) 
+	slows down considerably. Both algorithms were able to do extremely well by the end of training (
+	nearly 100\% winrate); SARSA(\(\lambda\)) reaches this upper bound perfectly, 
+	while \(Q\)-learning does not. However, given \(Q\)-learning's much smaller training 
+	time, if a small amount of error is tolerable, then \(Q\)-learning is the better option.
+\end{abstract}
+
 \section{Introduction}
 
 One of the most important reinforcement learning techniques we have learned in CSE 571 is 
@@ -236,11 +250,11 @@ def update(self, state, action, nextState, reward):
 	\begin{figure}[h]
 		\centering
 		\begin{subfigure}[b]{0.25\textwidth}
-			\includegraphics[width=\textwidth]{./images/qlearning_grid world_10}
+			\includegraphics[width=\textwidth]{./images/qlearning_gridworld_10}
 			\caption{\(Q\)-learning agent \(Q\) values}
 		\end{subfigure}%
 		\begin{subfigure}[b]{0.25\textwidth}
-			\includegraphics[width=\textwidth]{./images/SARSA_grid world_10}
+			\includegraphics[width=\textwidth]{./images/sarsa_gridworld_10}
 			\caption{SARSA\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
 		\caption{\(Q\) values of the \(Q\)-learning and SARSA\((\lambda)\) agents 
@@ -258,7 +272,7 @@ def update(self, state, action, nextState, reward):
 			\caption{\(Q\)-learning agent Policy}
 		\end{subfigure}%
 		\begin{subfigure}[b]{0.40\textwidth}
-			\includegraphics[width=\textwidth]{./images/SARSA_largeMaze_10}
+			\includegraphics[width=\textwidth]{./images/sarsa_largeMaze_10}
 			\caption{SARSA\((\lambda)\) agent Policy}
 		\end{subfigure}
 		\caption{Policies of the \(Q\)-learning and SARSA\((\lambda)\) agents 
@@ -273,7 +287,7 @@ def update(self, state, action, nextState, reward):
 			\caption{\(Q\)-learning agent \(Q\) values}
 		\end{subfigure}%
 		\begin{subfigure}[b]{0.25\textwidth}
-			\includegraphics[width=\textwidth]{./images/SARSA_customGrid_100}
+			\includegraphics[width=\textwidth]{./images/sarsa_customGrid_100}
 			\caption{SARSA\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
 		\caption{\(Q\) values of the \(Q\)-learning and SARSA\((\lambda)\) agents 
@@ -305,7 +319,7 @@ def update(self, state, action, nextState, reward):
 			\caption{\(Q\)-Learning Agent}
 		\end{subfigure}%
 		\begin{subfigure}{0.40\textwidth}
-			\includegraphics[width=\textwidth]{./images/SARSA_winrate}
+			\includegraphics[width=\textwidth]{./images/sarsa_winrate}
 			\caption{SARSA\((\lambda)\) Agent}
 		\end{subfigure}
 		\caption{Win rate vs training episodes for \(Q\)-learning and
@@ -364,9 +378,23 @@ but \(Q\)-learning with LFA will perform far better in fewer episodes, and perha
 
 
 \section{Team Effectiveness}
-We met soon after the team project was assigned, all having done the related homework, and done the SARSA\((\lambda)\) algorithm. Building the team had been a somewhat slow process, but we managed to find each other and put us all in one group chat, which was a wise decision as now we were all able to communicate instantly and directly with one another. In the meeting, we decided what our general roles would be, and set to work. Despite our team chat, however, we still had minor communication issues, as some of us missed the messages one way or another. Our biggest mistake was misunderstanding the instructions, setting out to describe the differences of SARSA\((\lambda)\) and \(Q\)-learning without LFA. Luckily, we were able to spot our mistake, and run some tests displaying how the 2 compare with LFA.
 \label{sec:team}
+We met soon after the team project was assigned, all having done the 
+related homework, and done the SARSA\((\lambda)\) algorithm. Building 
+the team had been a somewhat slow process, but we managed to find each 
+other and put us all in one group chat, which was a wise decision as 
+now we were all able to communicate instantly and directly with one 
+another. In the meeting, we decided what our general roles would be, 
+and set to work. Despite our team chat, however, we still had minor
+communication issues, as some of us missed the messages one way or 
+another. Our biggest mistake was misunderstanding the instructions, 
+setting out to describe the differences of SARSA\((\lambda)\) and 
+\(Q\)-learning without LFA. Luckily, we were able to spot our mistake, 
+and run some tests displaying how the 2 compare with LFA.
 
+
+\section{Source Code}
+The source code is avaible at \textit{https://github.com/Parsons-Ray/CSE571-Group-Project}.
 
 \bibliographystyle{abbrv}
 \bibliography{ref}
