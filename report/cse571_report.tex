@@ -329,7 +329,7 @@ From what we have already implemented, we can easily draw two conclusions:
 \(Q\)-learning seems to learn at a far lower computational cost per episode, but SARSA\((\lambda)\) converges faster each episode, implying that if you are doing machine learning in the real world, 
 where episodes can take a comparatively very long time, SARSA\((\lambda)\) should be your choice over \(Q\)-learning.
 
-However, with LFA, SARSA\((\lambda)\)'s performance per episode drastically decreases. The plateau at 1.0 success rate at the end of the graph suggests that it may still be desireable if the above is true and a .01 failure rate is unacceptable, but \(Q\)-learning with LFA will perform far better in fewer episodes.
+However, with LFA, SARSA\((\lambda)\)'s performance per episode drastically decreases. The plateau at 1.0 success rate at the end of the graph suggests that it may still be desireable if the above is true and a .01 failure rate is unacceptable, but \(Q\)-learning with LFA will perform far better in fewer episodes, and perhaps orders of magnitude less computational cost.
 
 \label{sec:conclusion}
 
