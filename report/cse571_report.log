@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.12.4)  4 DEC 2018 18:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.12.4)  4 DEC 2018 19:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -491,7 +491,14 @@ Type  H <return>  for immediate help.
 l.37 \begin{document}
                      
 ? 
-No file cse571_report.aux.
+(./cse571_report.aux
+
+LaTeX Warning: Label `qvalues' multiply defined.
+
+
+LaTeX Warning: Label `qvalues' multiply defined.
+
+)
 \openout1 = `cse571_report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
@@ -506,6 +513,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
 LaTeX Font Info:    ... okay on input line 37.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
 LaTeX Font Info:    ... okay on input line 37.
+
 -- Lines per column: 56 (exact).
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -617,21 +625,12 @@ Type  H <return>  for immediate help.
 l.155 		\end{minted}
                     
 ? 
-
-LaTeX Warning: Reference `sarsa' on page 1 undefined on input line 158.
-
-
-LaTeX Warning: Reference `sarsa' on page 1 undefined on input line 158.
-
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
 ]
 
 LaTeX Warning: Citation `ucbai' on page 2 undefined on input line 166.
-
-
-LaTeX Warning: Reference `summary' on page 2 undefined on input line 215.
 
 <./images/qlearning_gridworld_10.png, id=15, 685.56125pt x 636.3775pt>
 File: ./images/qlearning_gridworld_10.png Graphic file (type png)
@@ -700,9 +699,6 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 261--270
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-LaTeX Warning: Reference `qvalues' on page 2 undefined on input line 277.
-
 <./images/qlearning_winrate.png, id=22, 462.528pt x 346.896pt>
 File: ./images/qlearning_winrate.png Graphic file (type png)
 
@@ -720,9 +716,6 @@ Package pdftex.def Info: ./images/sarsa_winrate.png used on input line 298.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-LaTeX Warning: Reference `winrate' on page 2 undefined on input line 316.
 
 [2 <./images/qlearning_gridworld_10.png> <./images/sarsa_gridworld_10.png>]
 [3 <./images/qlearning_largeMaze_10.PNG> <./images/sarsa_largeMaze_10.PNG> <./i
@@ -749,13 +742,13 @@ runsystem(rm "cse571_report.pyg")...disabled (restricted).
 LaTeX Warning: There were undefined references.
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 8657 strings out of 493029
- 145768 string characters out of 6136234
- 270904 words of memory out of 5000000
+ 8659 strings out of 493029
+ 145804 string characters out of 6136234
+ 271158 words of memory out of 5000000
  12066 multiletter control sequences out of 15000+600000
  40403 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -774,7 +767,7 @@ are/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/t
 exmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/time
 s/utmri8a.pfb>
-Output written on cse571_report.pdf (4 pages, 717383 bytes).
+Output written on cse571_report.pdf (4 pages, 717329 bytes).
 PDF statistics:
  91 PDF objects out of 1000 (max. 8388607)
  54 compressed objects within 1 object stream
