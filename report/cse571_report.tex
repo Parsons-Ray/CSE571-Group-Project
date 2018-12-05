@@ -173,7 +173,7 @@ def update(self, state, action, nextState, reward):
 	values for each agent were: \(\epsilon = 0.05, \gamma = 0.8, \alpha = 0.2\,
 	\lambda = 0.8\) and \(noise = 0.2\).
 
-	We also created two custom grid layouts visualizations. CustomGrid and LargeMazeGrid to test and compare the two agents. The LargeMazeGrid is a 20x20 grid with multiple dead ends and a single reward. We ran both the agents for 100 episodes (with default values and 0 noise) and the Sarsa\((\lambda)\) agent out performed the Q-learning agent on this grid. For the Sarsa\((\lambda)\) agent policy convergence was noticed after 15 episodes, whereas for the Q-learning agent it was after 65 episodes. Average time taken per episode for the Sarsa\((\lambda)\) agent was 0.18s, while the Q-learning agent took 0.29s.
+	We also created two custom grid layouts visualizations. CustomGrid and LargeMazeGrid to test and compare the two agents. The LargeMazeGrid is a 20x20 grid with multiple dead ends and a single reward. We ran both the agents for 100 episodes (with default values and 0 noise) and the Sarsa\((\lambda)\) agent out-performed the Q-learning agent on this grid. For the SARSA\((\lambda)\) agent policy convergence was noticed after 15 episodes, whereas for the Q-learning agent it was after 65 episodes. Average time taken per episode for the SARSA\((\lambda)\) agent was 0.18s, while the Q-learning agent took 0.29s.
 
 	The CustomGrid is a 5x5 grid, with a small reward near the start point and a large reward further away, with a couple hazards along the way. We ran both the agents for 1000 episodes (with default values and 0 noise). Both the agents performed identically on this grid. With the small reward being near the start, both the agents deviated towards it and didn't stray much from that path. 
 	
@@ -266,23 +266,23 @@ def update(self, state, action, nextState, reward):
 			\includegraphics[width=\textwidth]{./images/sarsa_customGrid_100}
 			\caption{Sarsa\((\lambda)\) agent \(Q\) values}
 		\end{subfigure}
-		\caption{\(Q\) values of the \(Q\)-learning and Sarsa\((\lambda)\) agents 
+		\caption{\(Q\) values of the \(Q\)-learning and SARSA\((\lambda)\) agents 
 		after 100 episodes on the CustomGrid. Identical results are found for both the agents on this grid.}
 		\label{qvalues}
 	\end{figure}
 
-	In the \textit{gridworld.py} experiments we found that Sarsa\((\lambda)\) 
+	In the \textit{gridworld.py} experiments we found that SARSA\((\lambda)\) 
 	performed better per episode than \(Q\)-learning due its eligibility trace allowing for
 	each training episode to update more of the \(Q\)-values than \(Q\)-learning's
 	single step functions. Figure \ref{qvalues} clearly illustrates the difference. 
 	After only 10 training episodes, a majority of the \(Q\)-values have been
-	updated at least once by the Sarsa\((\lambda)\) agent; while the \(Q\)-learning
+	updated at least once by the SARSA\((\lambda)\) agent; while the \(Q\)-learning
 	agent has only updated a few of its \(Q\)-values.
 
 	The ability to update the \(Q\)-values associated with each \((state,action)\) 
 	in the eligibility trace allows for good decisions be effect the value of the 
 	prior decisions, and thus speeds up policy convergence.  It also, means that
-	Sarsa\((\lambda)\) is susceptible to noise, as a series of poor or random choices 
+	SARSA\((\lambda)\) is susceptible to noise, as a series of poor or random choices 
 	that lead to a positive outcome are \textit{all} updated as though those 
 	decisions were good or meaningful to the final outcome.  This leads the agent
 	to get temporarily stuck in policies which are not optimal, meaning take longer
@@ -311,20 +311,25 @@ def update(self, state, action, nextState, reward):
 	picks an action, is the time needed to loop through all of the \(Q\)-values
 	visited in the environment. For small simple environments such as \textit{gridworld.py},
 	the trade off between training time and number of training episodes puts 
-	Sarsa\((\lambda)\) ahead of \(Q\)-learning. However, in the more complex 
-	\textit{pacman.py} environment the Sarsa\(\lambda)\) agent slows down 
-	considerably. Even though Figure \ref{winrate} shows that Sarsa\((\lambda)\) 
+	SARSA\((\lambda)\) ahead of \(Q\)-learning. However, in the more complex 
+	\textit{pacman.py} environment the SARSA\(\lambda)\) agent slows down 
+	considerably. Even though Figure \ref{winrate} shows that SARSA\((\lambda)\) 
 	was able to reach peak win rate with fewer training episodes than \(Q\)-learning,
 	the difference in real world training time was several hours.
 
 \section{Conclusion}
 From what we have already implemented, we can easily draw two conclusions:
 
-1. \(Q\)-learning maybe suffers from problems converging as a result due to it has higher per-sample variance than SARSA\((\lambda)\), however SARSA\((\lambda)\) learns a near-optimal policy while exploring. So if we decide to use SARSA\((\lambda)\), we need propose a good strategy to decay ϵ in  ϵ-greedy action choice, which can become fiddly hyper parameter to adjust.
+1. \(Q\)-learning maybe suffers from problems converging as a result due to it has higher per-sample variance than SARSA\((\lambda)\), however SARSA\((\lambda)\) learns a near-optimal policy while exploring. So if we decide to use SARSA\((\lambda)\), we need propose a good strategy to explore alternative paths, as might occur with \(\epsilon\)-greedy action choice, which can become fiddly hyper parameter to adjust.
 
-2. SARSA\((\lambda)\) is more conservative than \(Q\)-learning, because SARSA will approach convergence allowing for all kinds of penalties while agent explores its move while the \(Q\)-learning ignore them. In another words, if there is risk of a large negative reward close to the optimal path, Q-learning will perform more aggressive and will trigger that reward risk. On the contrary, SARAS will try to avoid it and slowly learn to use it.
+2. SARSA\((\lambda)\) is more conservative than \(Q\)-learning, because SARSA will approach convergence allowing for all kinds of penalties while agent explores its move while the \(Q\)-learning ignore them. In another words, if there is risk of a large negative reward close to the optimal path, Q-learning will react more aggressively and will avoid the area associated with that risk. On the contrary, SARSA\((\lambda)\) will try to avoid it and slowly learn to use it.
 
-All in all, \(Q\)-learning learn optimal policy directly and SARSA\((\lambda)\) learn online. If you want to train agent in low-cost and fast0iterating environment, choose \(Q\)-learning. And if you care about reward risks while learning, SARAS will be the best choice compared \(Q\)-learning.
+3. When both algorithms use linear function approximation, \(Q\)-learning converges faster than SARSA\((\lambda)\) but at the end of the training SARSA\((\lambda)\) seems to have a winrate of 1.0 as opposed to LFA \(Q\)-learning, which is high, but doesn't remain at 1.0.
+
+\(Q\)-learning seems to learn at a far lower computational cost per episode, but SARSA\((\lambda)\) converges faster each episode, implying that if you are doing machine learning in the real world, 
+where episodes can take a comparatively very long time, SARSA\((\lambda)\) should be your choice over \(Q\)-learning.
+
+However, with LFA, SARSA\((\lambda)\)'s performance per episode drastically decreases. The plateau at 1.0 success rate at the end of the graph suggests that it may still be desireable if the above is true and a .01 failure rate is unacceptable, but \(Q\)-learning with LFA will perform far better in fewer episodes.
 
 \label{sec:conclusion}
 
