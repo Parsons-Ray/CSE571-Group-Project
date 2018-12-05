@@ -1,0 +1,17 @@
+def update(self, state, action, nextState, reward):
+    nextAction = self.getAction(nextState)
+
+    delta = reward + (self.discount *
+        self.values[(nextState, nextAction)]) -
+        self.values[(state, action)]
+
+    self.eligibility[(state, action)] = (1 - self.alpha) *
+        self.eligibility[(state, action)] + 1
+
+    for k, v in self.values.iteritems():
+        trace = self.eligibility[k]
+        self.values[k] = v + (self.alpha * delta * trace)
+        self.eligibility[k] = trace * self.discount * self.y
+
+    if not self.getLegalActions(nextState):
+        self.eligibility = util.Counter()
