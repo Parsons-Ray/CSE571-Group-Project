@@ -265,20 +265,20 @@ def update(self, state, action, nextState, reward):
 		\label{qvalues}
 	\end{figure}
 
-	\begin{figure*}[h]
+	\begin{figure}[h]
 		\centering
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/qlearning_largeMaze_10}
 			\caption{\(Q\)-learning agent Policy}
 		\end{subfigure}%
-		\begin{subfigure}[b]{0.40\textwidth}
+		\begin{subfigure}[b]{0.25\textwidth}
 			\includegraphics[width=\textwidth]{./images/sarsa_largeMaze_10}
 			\caption{SARSA\((\lambda)\) agent Policy}
 		\end{subfigure}
 		\caption{Policies of the \(Q\)-learning and SARSA\((\lambda)\) agents 
 		after 10 episodes on the LargeMazeGrid. SARSA\((\lambda)\) agent's policy is almost on the verge of converging as opposed to that of the \(Q\)-learning agent.}
 		\label{maze-qvalues}
-	\end{figure*}
+	\end{figure}
 
 		\begin{figure}[h]
 		\centering
